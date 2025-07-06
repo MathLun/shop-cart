@@ -1,0 +1,11 @@
+{
+	"name": "shop-cart",
+	"description": "",
+	"main": "src/server/server.js",
+	"scripts": {
+		"start": "node ."
+	},
+	"dependencies": {
+		"express": "^5.1.0"
+	}
+}
