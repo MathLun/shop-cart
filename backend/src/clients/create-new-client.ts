@@ -13,9 +13,9 @@ export default class CreateNewClient {
                 password: input.password
             }, input._id)
             await this.clientRepo.save(client)
-            return { message: "Novo client criado com sucesso" }
+            return { message: "[Ok]" }
         } catch (error) {
-            return { message: "Erro ao criar o client!" }
+            return { message: "Falhou!" }
         }
     }
 }

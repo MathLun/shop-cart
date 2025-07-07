@@ -14,7 +14,7 @@ export default class AccountMemoryRepo implements AccountRepo {
     async update(account: Account): Promise<void> {}
 
     async get(id: string): Promise<Account> {
-        const account = this.accounts.find(account => account._id === id)
+        const account = this.accounts.find(account => account.getId() === id)
         if (!account) throw new Error()
         return account
     }

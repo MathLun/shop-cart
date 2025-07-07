@@ -8,15 +8,16 @@ export class CreateNewAccount {
         try {
             const account = new Account(input)
             await this.accountRepo.save(account)
-            return { message: "Nova conta criada com sucesso!" }
+            return { message: "[Ok]" }
         } catch (error) {
-            return { message: "Erro ao criar uma nova conta" }
+            return { message: "Falhou!" }
         }
     }
 }
 
 type Input = {
     username: string
+    storename: string
     email: string
     password: string
     role: string

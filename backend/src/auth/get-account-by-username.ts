@@ -9,7 +9,7 @@ export default class GetAccountByUsername {
             const account = await this.accountRepo.getByUsername(input.username)
             return { message: "[Ok]", data: account }
         } catch (error) {
-            return { message: "[Error]" }
+            return { message: "Falhou!", data: undefined }
         }
     }
 }

@@ -8,9 +8,9 @@ export default class CreateNewAdmin {
         try {
             const admin = new Admin({ storename: input.storename, email: input.email, password: input.password }, input._id)
             await this.adminRepo.save(admin)
-            return { message: 'Ok' }
+            return { message: '[Ok]' }
         } catch (e) {
-            return { message: 'Falhou' }
+            return { message: 'Falhou!' }
         }
     }
 }

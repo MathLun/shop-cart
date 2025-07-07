@@ -3,6 +3,7 @@ import { CreateNewAccount } from '../auth/create-new-account'
 import GetAccountByUsername from '../auth/get-account-by-username'
 import CreateNewClient from '../clients/create-new-client'
 import { createPasswordHash } from '../utils/create-password-hash'
+import { validatePassowrdHash } from '../utils/validate-password-hash'
 import { accountRepo, adminRepo, clientRepo } from '../repos'
 import CreateNewAdmin from '../admin/create-new-admin'
 
@@ -24,7 +25,8 @@ authRouter.post('/register', async (req: Request, res: Response, next: NextFunct
         const isClient = role === "client"
         const isAdmin = role === "admin"
 
-        await createNewAccount.exec({ username, email, password: passwordHash, role })
+        const { message } = await createNewAccount.exec({ username, storename, email, password: passwordHash, role })
+        console.log("CreateNewAccount: ", message)
 
         const account = await getAccountByUsername.exec({ username: username })
         const accountId = account.data?.getId()
@@ -32,7 +34,7 @@ authRouter.post('/register', async (req: Request, res: Response, next: NextFunct
 
         if (isClient) {
             const { message } = await createNewClient.exec({ _id: accountId, username, storename, email, password: passwordHash })
-            console.log("CreateNewClient: " + message)
+            console.log("CreateNewClient: ", message)
         }
 
         if (isAdmin) {
@@ -47,5 +49,19 @@ authRouter.post('/register', async (req: Request, res: Response, next: NextFunct
         })
     } catch (error) {
         console.error('Error: ao criar a conta -> ', error)
+    }
+})
+
+
+authRouter.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { username, password } = req.body
+        const account = await getAccountByUsername.exec({ username })
+        const accountPassword = account.data?.getPassword() || ''
+        const isPasswordValid = await validatePassowrdHash(accountPassword, password)
+        
+        account && isPasswordValid && res.json({ status: 201, data: account })
+    } catch (e) {
+        console.error(e)
     }
 })
