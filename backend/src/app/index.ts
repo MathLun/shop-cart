@@ -1,7 +1,8 @@
 import express, { Application } from 'express'
+import { authRouter } from '../routes/auth'
+import { clientsRouter } from '../routes/clients'
+
 export const app: Application = express()
-app.get('/', (req, res) => {
-	res.json({
-		message: 'Hello World!'
-	})
-})
+app.use(express.json())
+app.use('/api/auth', authRouter)
+app.use('/api/clients', clientsRouter)
