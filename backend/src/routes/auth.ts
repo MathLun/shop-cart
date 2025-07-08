@@ -6,6 +6,7 @@ import { createPasswordHash } from '../utils/create-password-hash'
 import { validatePassowrdHash } from '../utils/validate-password-hash'
 import { accountRepo, adminRepo, clientRepo } from '../repos'
 import CreateNewAdmin from '../admin/create-new-admin'
+import { createTokenFromAccess } from '../utils/create-token-from-access'
 
 /* UseCases: Account */
 const createNewAccount: CreateNewAccount = new CreateNewAccount(accountRepo)
@@ -25,7 +26,14 @@ authRouter.post('/register', async (req: Request, res: Response, next: NextFunct
         const isClient = role === "client"
         const isAdmin = role === "admin"
 
-        const { message } = await createNewAccount.exec({ username, storename, email, password: passwordHash, role })
+        const { message, data } = await createNewAccount.exec({ username, storename, email, password: passwordHash, role })
+        const tokenData = await createTokenFromAccess({ data: {
+            username: data?.getUsername(),
+            storename: data?.getStorename(),
+            email: data?.getEmail(),
+            password: data?.getPassword(),
+            role: data?.getRole()
+        }})
         console.log("CreateNewAccount: ", message)
 
         const account = await getAccountByUsername.exec({ username: username })
@@ -45,7 +53,7 @@ authRouter.post('/register', async (req: Request, res: Response, next: NextFunct
         res.json({
             status: 201,
             message: 'Conta criada com sucesso!',
-            data: { username: account.data?.getUsername(), role: account.data?.getRole() }
+            data: { username: account.data?.getUsername(), role: account.data?.getRole(), token: tokenData.token }
         })
     } catch (error) {
         console.error('Error: ao criar a conta -> ', error)
@@ -59,8 +67,14 @@ authRouter.post('/login', async (req: Request, res: Response, next: NextFunction
         const account = await getAccountByUsername.exec({ username })
         const accountPassword = account.data?.getPassword() || ''
         const isPasswordValid = await validatePassowrdHash(accountPassword, password)
-        
-        account && isPasswordValid && res.json({ status: 201, data: account })
+        const tokenData = await createTokenFromAccess({ data: {
+            username: account.data?.getUsername(),
+            storename: account.data?.getStorename(),
+            email: account.data?.getEmail(),
+            password: account.data?.getPassword(),
+            role: account.data?.getRole()
+        }})
+        account && isPasswordValid && res.json({ status: 201, data: account, token: tokenData.token })
     } catch (e) {
         console.error(e)
     }

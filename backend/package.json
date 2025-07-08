@@ -4,6 +4,7 @@
 	"main": "dist/server/server.js",
 	"scripts": {
 		"build": "tsc",
+		"key-test": "ts-node src/constants/private-key.ts",
 		"local": "ts-node src/server/server.ts",
 		"start": "node ."
 	},
@@ -13,9 +14,11 @@
 		"@types/express": "^5.0.3",
 		"bcrypt": "^6.0.0",
 		"body-parser": "^2.2.0",
-		"express": "^5.1.0"
+		"express": "^5.1.0",
+		"jsonwebtoken": "^9.0.2"
 	},
 	"devDependencies": {
+		"@types/jsonwebtoken": "^9.0.10",
 		"@types/node": "^24.0.10",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.8.3"

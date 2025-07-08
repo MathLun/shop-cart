@@ -4,11 +4,11 @@ import AccountRepo from "./account-repo";
 export class CreateNewAccount {
     constructor(readonly accountRepo: AccountRepo) {}
 
-    async exec(input: Input): Promise<Output> {
+    async exec(input: Input): Promise<Output<Account>> {
         try {
             const account = new Account(input)
             await this.accountRepo.save(account)
-            return { message: "[Ok]" }
+            return { message: "[Ok]", data: account }
         } catch (error) {
             return { message: "Falhou!" }
         }
@@ -23,6 +23,7 @@ type Input = {
     role: string
 }
 
-type Output = {
-    message: string
+type Output<T> = {
+    message: string,
+    data?: T
 }
